@@ -2,6 +2,7 @@ package com.example.assessment.service;
 
 import com.example.assessment.entity.Transaction;
 import com.example.assessment.entity.User;
+import com.example.assessment.exception.TransactionNotFoundException;
 import com.example.assessment.model.TransactionDTO;
 import com.example.assessment.repository.TransactionRepository;
 import org.apache.coyote.BadRequestException;
@@ -42,18 +43,17 @@ public class TransactionService {
     }
 
     public Transaction getTransaction(Integer id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow(() -> new TransactionNotFoundException("Transaction with ID " + id + " not found"));
     }
 
-    public Boolean deleteTransaction(Integer id) throws BadRequestException {
-        if(repository.findById(id).orElse(null) == null) throw new BadRequestException("Transcation does not exist");
+    public Boolean deleteTransaction(Integer id) {
+        repository.findById(id).orElseThrow(() -> new TransactionNotFoundException("Transaction with ID " + id + " not found"));
         repository.deleteById(id);
         return TRUE;
     }
 
     public Transaction updateTransaction(TransactionDTO transactionDTO, Integer id) throws BadRequestException {
-        Transaction transaction = transactionRepository.findById(id).orElse(null);
-        if(transaction == null) throw new BadRequestException("Transaction does not exist");
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new TransactionNotFoundException("Transaction with ID " + id + " not found"));
         User sender = userService.getUser(transactionDTO.getSenderId());
         User receiver = userService.getUser(transactionDTO.getReceiverId());
         if(sender == null || receiver == null) throw new BadRequestException("One of your Users do not exist");
