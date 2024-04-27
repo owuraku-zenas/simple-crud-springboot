@@ -39,7 +39,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Response<Boolean>> deleteTransaction(@PathVariable Integer id) throws BadRequestException {
+    public ResponseEntity<Response<Boolean>> deleteTransaction(@PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Response.<Boolean>builder().data(service.deleteTransaction(id)).message("Transaction Created").statusCode(HttpStatus.NO_CONTENT.value()).status(HttpStatus.NO_CONTENT).build());
 
     }
